@@ -1,0 +1,19 @@
+Meter Reader
+Installation of ImagePi, Tesseract
+
+Activate PiCamera in Preferences and reboot
+
+>sudo apt-get install tesseract-ocr
+
+To install PIP (Image library)
+
+>sudo apt-get install python-dev
+>tar xvf Imaging-1.1.7.tar.gz
+>sudo python setup.py install
+
+git clone https://github.com/madmaze/pytesseract.git
+
+sudo apt-get install libjpeg-dev zlib1g-dev
+pip install pillow --upgrade
+pip install pytesseract
+
