@@ -1,9 +1,108 @@
 #coding: utf-8
 from picamera import PiCamera
 from time import sleep
+try:
+    import Image
+except ImportError:
+    from PIL import Image
 import sys
-
 import pytesseract
+
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+
+class ImageProcessor(object):
+
+    def __init__(self, imgname=""):
+        self.imgname = imgname
+        self.img = None
+        self.loaded = False
+        self.size = (0,0)
+        self.height = 0
+        self.selection = None
+    
+    def loadandshow(self, name=""):
+        self.open(name)
+        self.img.show()
+        
+    def show(self):
+        if self.loaded == True:
+            self.img.show()
+        else:
+            print("No image loaded")
+
+    def showSelection(self):
+        if self.loaded == True and self.selection != None:
+            self.selection.show()
+        else:
+            print("No image loaded or region selected")
+            
+    def getProperties(self):
+        if self.loaded == True:
+            print("Name: %s"%self.imgname)
+            print("Width, Height:",self.size)
+        else:
+            print("getProperties: No image loaded")
+
+    def open(self, name=""):
+        if name != "":
+            self.imgname = name
+        else:
+            if self.imgname == "":
+                print("No filename available")
+
+        # We have a valid filename here
+        print("loading name %s..."%self.imgname)
+        try:
+            self.img = Image.open(self.imgname)
+            self.loaded = True
+            self.size = self.img.size
+        except IOError as err:
+            print("IOError Exception: Filename is invalid!")
+
+    def selectRegion(self,regionbox):
+        if self.loaded == True:
+            self.selection = self.img.crop(regionbox)
+        else:
+            print("getProperties: No image loaded")
+       
+    def readMeter(self):
+        if self.loaded == True:
+            if self.selection != None:
+                # If there is a selection, read characters on the selection
+                print(pytesseract.image_to_string(self.selection))
+            else:
+                # else read characters on the main image
+                print(pytesseract.image_to_string(self.img,
+                                                  lang=eng,
+                                                  config='--psm 7'))
+        else:
+            print("No image loaded or region selected")
+        
+    def save(self,filename ="", imgtype=""):
+        if filename == "":
+            print("No filename available")
+        else:
+            if imgtype == 'selection':
+                self.selection.save(filename)
+            elif imgtype == 'original':
+                self.img.save(filename)
+            else:
+                print("Use 'selection' or 'original' to specify image to save to file.")
+
+
+# main stats here
+
+img = ImageProcessor("./pics/ugigasmeterG4.jpg")
+#img = ImageProcessor("./pics/b5A7j.png")
+img.open()
+img.getProperties()
+#img.show()
+img.selectRegion((280,360,635,415))
+img.showSelection()
+img.readMeter()
+#img.save("pics/cropmeter.jpg",'selection')
+
+
 #from PIL import Image
 
 

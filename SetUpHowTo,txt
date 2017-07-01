@@ -1,13 +1,22 @@
 Meter Reader
-Installation of ImagePi, Tesseract
+Installation of ImagePi, Tesseract for Automated Meter Reader
 
-Activate PiCamera in Preferences and reboot
+Laurent Balmelli - 7/1/2017
+------------------
+
+1. Connect PiCamera
+2. Activate PiCamera in Preferences and reboot
+3. Install python library for image process
+    >sudo apt-get install python-dev
+    
+
+
 
 >sudo apt-get install tesseract-ocr
 
 To install PIP (Image library)
 
->sudo apt-get install python-dev
+
 >tar xvf Imaging-1.1.7.tar.gz
 >sudo python setup.py install
 
