@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# create the box file for example exp0
+# -> loop over all the example
+
 tesseract meter.MeterChar.exp0.jpg meter.MeterChar.exp0.box nobatch box.train
- 
+
+# create character set for all example
+# -> loop
 unicharset_extractor meter.MeterChar.exp0.box
  
 # font name <italic> <bold> <fixed> <serif> <fraktur>

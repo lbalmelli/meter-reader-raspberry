@@ -7,6 +7,8 @@ except ImportError:
     from PIL import Image
 import sys
 import pytesseract
+import io
+import time
 
 pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
@@ -19,6 +21,8 @@ class ImageProcessor(object):
         self.size = (0,0)
         self.height = 0
         self.selection = None
+        self.cameraSet = False
+        self.camera = None
     
     def loadandshow(self, name=""):
         self.open(name)
@@ -89,17 +93,49 @@ class ImageProcessor(object):
             else:
                 print("Use 'selection' or 'original' to specify image to save to file.")
 
+    def setCamera(self,camera=None):
+        try:
+            self.camera = PiCamera()
+            self.cameraSet = True
+            return self.camera
+        except PiCameraError:
+            print("Camera not available")
+            
+    def getPictureFromCamera(self):
+        self.setCamera();
+        stream = io.BytesIO()
+        with self.camera:
+            self.camera.start_preview()
+            time.sleep(2)
+            self.camera.capture(stream, format='jpeg')
+        # rewind stream to beginning
+        stream.seek(0)
+        self.img = Image.open(stream)
+        self.imgname = "picamera"
+        self.loaded = True
 
-# main stats here
 
-img = ImageProcessor("./pics/ugigasmeterG4.jpg")
+#
+# main starts here
+#
+
+proc = ImageProcessor()
+proc.getPictureFromCamera()
+proc.getProperties()
+proc.selectRegion((500,400,1100,500))
+proc.showSelection()
+proc.save("pics/cropmeter2.jpg",'selection')
+proc.readMeter()
+
+#img = ImageProcessor("./pics/ugigasmeterG4.jpg")
 #img = ImageProcessor("./pics/b5A7j.png")
-img.open()
-img.getProperties()
+
+#img.open()
+#img.getProperties()
 #img.show()
-img.selectRegion((280,360,635,415))
-img.showSelection()
-img.readMeter()
+#img.selectRegion((280,360,635,415))
+#img.showSelection()
+#img.readMeter()
 #img.save("pics/cropmeter.jpg",'selection')
 
 
@@ -113,7 +149,7 @@ img.readMeter()
 
 #print sys.getdefaultencoding()
 
-#camera = PiCamera()
+#
 
 #camera.rotation = 180
 #camera.start_preview()
