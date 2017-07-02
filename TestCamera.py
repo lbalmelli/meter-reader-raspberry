@@ -73,7 +73,7 @@ class ImageProcessor(object):
             else:
                 # else read characters on the main image
                 print(pytesseract.image_to_string(self.img,
-                                                  lang=eng,
+                                                  lang=meteer,
                                                   config='--psm 7'))
         else:
             print("No image loaded or region selected")
